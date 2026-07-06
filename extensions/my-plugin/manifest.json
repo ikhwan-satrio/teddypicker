@@ -1,0 +1,17 @@
+{
+  "id": "my-plugin",
+  "name": "My File Preview Plugin",
+  "version": "1.0.0",
+  "type": "plugin",
+  "entry": "plugin.js",
+  "permissions": ["fs:read"],
+  "contributes": {
+    "previewHandlers": ["txt", "md", "json"],
+    "contextMenuActions": [
+      {
+        "label": "Preview File",
+        "command": "previewFile"
+      }
+    ]
+  }
+}

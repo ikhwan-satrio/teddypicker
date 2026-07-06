@@ -1,0 +1,8 @@
+{
+  "id": "my-theme",
+  "name": "My Custom Theme",
+  "version": "1.0.0",
+  "type": "theme",
+  "entry": "theme.css",
+  "permissions": []
+}

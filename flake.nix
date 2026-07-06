@@ -1,0 +1,114 @@
+{
+  description = "Wantoexplore — Tauri v2 file manager";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
+  };
+
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      ...
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+
+        version = "1.1.0";
+
+        debUrl = "https://github.com/ikhwan-satrio/gibterm/releases/download/v${version}/gibterm_${version}_amd64.deb";
+
+        deb = pkgs.fetchurl {
+          url = debUrl;
+          hash = "sha256:88470b3a02064cafa89c0d7fc54f77ffbd8e1c50c3b8322a14f6f1c58994feda";
+        };
+
+        runtimeDeps = with pkgs; [
+          webkitgtk_4_1
+          gtk3
+          glib
+          libayatana-appindicator
+          librsvg
+          libsoup_3
+          openssl
+          sqlite
+        ];
+      in
+      {
+        devShells.default = pkgs.mkShell {
+          buildInputs = runtimeDeps;
+          nativeBuildInputs = with pkgs; [
+            pkg-config
+            bun
+            nodejs
+            wrapGAppsHook4
+            glib
+            gsettings-desktop-schemas
+            hicolor-icon-theme
+          ];
+        };
+
+        packages.default = pkgs.stdenv.mkDerivation {
+          pname = "gibterm";
+          inherit version;
+
+          src = deb;
+
+          nativeBuildInputs = with pkgs; [
+            dpkg
+            autoPatchelfHook
+            wrapGAppsHook4
+          ];
+
+          buildInputs = runtimeDeps ++ (with pkgs; [
+            glib
+            gsettings-desktop-schemas
+            hicolor-icon-theme
+          ]);
+
+          dontConfigure = true;
+          dontBuild = true;
+
+          installPhase = ''
+            runHook preInstall
+
+            dpkg -x $src unpacked
+
+            mkdir -p $out/bin
+            if [ -f unpacked/usr/bin/gibterm ]; then
+              cp unpacked/usr/bin/gibterm $out/bin/gibterm
+            else
+              cp unpacked/usr/bin/app $out/bin/gibterm
+            fi
+
+            mkdir -p $out/share
+            cp -r unpacked/usr/share/* $out/share/
+
+            chmod +x $out/bin/gibterm
+
+            runHook postInstall
+          '';
+
+          preFixup = ''
+            gappsWrapperArgs+=(
+              --prefix GDK_BACKEND : "wayland:x11"
+              --prefix XDG_CURRENT_DESKTOP : "GNOME"
+              --prefix LD_LIBRARY_PATH : "${pkgs.lib.makeLibraryPath runtimeDeps}"
+            )
+          '';
+
+          meta = with pkgs.lib; {
+            description = "Terminal emulator";
+            homepage = "https://github.com/ikhwan-satrio/gibterm";
+            license = licenses.mit;
+            platforms = [ "x86_64-linux" ];
+            mainProgram = "gibterm";
+          };
+        };
+      }
+    );
+}
