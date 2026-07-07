@@ -42,6 +42,31 @@ bun run tauri dev
 bun run tauri build
 ```
 
+### Install via Nix flake
+
+For Nix/NixOS users, you can run or install teddypicker directly from the flake:
+
+```bash
+# Run without installing
+nix run github:ikhwan-satrio/teddypicker
+
+# Install to your profile
+nix profile install github:ikhwan-satrio/teddypicker
+
+# Or add to your system configuration (NixOS / home-manager)
+# In your flake.nix inputs:
+#   teddypicker.url = "github:ikhwan-satrio/teddypicker";
+#
+# In your packages:
+#   environment.systemPackages = [ inputs.teddypicker.packages.${system}.default ];
+```
+
+To enter the development shell:
+
+```bash
+nix develop
+```
+
 ## Project structure
 
 ```
