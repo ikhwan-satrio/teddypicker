@@ -24,7 +24,7 @@
 
         deb = pkgs.fetchurl {
           url = debUrl;
-          hash = "sha256:e1636a90ca5f97372e5f2c156571a667e491818e7c6b8b85e0b8b94b0ca9dbc5";
+          hash = "sha256:3f75a59847adf74918bb56fb7b0ed46fa4321530059659ddfbdd58f4f2159151";
         };
 
         runtimeDeps = with pkgs; [
