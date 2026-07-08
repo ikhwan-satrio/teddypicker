@@ -45,7 +45,6 @@
             pkg-config
             bun
             nodejs
-            wrapGAppsHook4
             glib
             gsettings-desktop-schemas
             hicolor-icon-theme
