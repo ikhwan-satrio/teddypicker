@@ -18,7 +18,7 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
-        version = "1.2.0";
+        version = "1.3.0";
 
         debUrl = "https://github.com/ikhwan-satrio/teddypicker/releases/download/v${version}/teddypicker_${version}_amd64.deb";
 

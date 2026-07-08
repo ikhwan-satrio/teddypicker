@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.0] - 2026-07-08
+
+### Fixed
+- **Production GTK crash** — replaced `wrapGAppsHook4` with `makeWrapper` for reliable GTK library wrapping in Nix package builds
+- **Dev shell LD_LIBRARY_PATH** — GTK runtime libraries now available in development shell via `shellHook`
+
+### Removed
+- Removed unused `wrapGAppsHook4` from dev shell
+
 ## [1.2.0] - 2026-07-08
 
 ### Added
