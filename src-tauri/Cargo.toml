@@ -1,6 +1,6 @@
 [package]
 name = "teddypicker"
-version = "1.3.0"
+version = "1.4.0"
 description = "TeddyPicker - a file manager"
 authors = ["ikhwan-satrio"]
 license = ""

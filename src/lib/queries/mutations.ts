@@ -13,6 +13,13 @@ function useRefresh() {
   };
 }
 
+function getErrorMessage(error: unknown): string {
+  if (typeof error === 'string') return error;
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === 'object' && 'message' in error) return String((error as { message: unknown }).message);
+  return String(error);
+}
+
 export function useDeleteMutation() {
   const refresh = useRefresh();
   return createMutation(() => ({
@@ -33,7 +40,7 @@ export function useDeleteMutation() {
       refresh();
     },
     onError: (error, _paths, context) => {
-      toast.error(`Delete failed: ${error.message}`, {
+      toast.error(`Delete failed: ${getErrorMessage(error)}`, {
         id: context?.toastId,
         duration: 5000,
       });
@@ -65,7 +72,7 @@ export function usePasteMutation() {
       refresh();
     },
     onError: (error, _variables, context) => {
-      toast.error(`Paste failed: ${error.message}`, {
+      toast.error(`Paste failed: ${getErrorMessage(error)}`, {
         id: context?.toastId,
         duration: 5000,
       });
@@ -90,7 +97,7 @@ export function useRenameMutation() {
       refresh();
     },
     onError: (error, _variables, context) => {
-      toast.error(`Rename failed: ${error.message}`, {
+      toast.error(`Rename failed: ${getErrorMessage(error)}`, {
         id: context?.toastId,
         duration: 5000,
       });
@@ -115,7 +122,7 @@ export function useCreateDirMutation() {
       refresh();
     },
     onError: (error, _variables, context) => {
-      toast.error(`Create folder failed: ${error.message}`, {
+      toast.error(`Create folder failed: ${getErrorMessage(error)}`, {
         id: context?.toastId,
         duration: 5000,
       });
@@ -140,7 +147,7 @@ export function useCreateFileMutation() {
       refresh();
     },
     onError: (error, _variables, context) => {
-      toast.error(`Create file failed: ${error.message}`, {
+      toast.error(`Create file failed: ${getErrorMessage(error)}`, {
         id: context?.toastId,
         duration: 5000,
       });
@@ -168,7 +175,7 @@ export function useRestoreTrashMutation() {
       refresh();
     },
     onError: (error, _ids, context) => {
-      toast.error(`Restore failed: ${error.message}`, {
+      toast.error(`Restore failed: ${getErrorMessage(error)}`, {
         id: context?.toastId,
         duration: 5000,
       });
@@ -196,7 +203,7 @@ export function usePurgeTrashMutation() {
       refresh();
     },
     onError: (error, _ids, context) => {
-      toast.error(`Delete failed: ${error.message}`, {
+      toast.error(`Delete failed: ${getErrorMessage(error)}`, {
         id: context?.toastId,
         duration: 5000,
       });
@@ -221,7 +228,7 @@ export function useEmptyTrashMutation() {
       refresh();
     },
     onError: (error, _variables, context) => {
-      toast.error(`Empty trash failed: ${error.message}`, {
+      toast.error(`Empty trash failed: ${getErrorMessage(error)}`, {
         id: context?.toastId,
         duration: 5000,
       });
@@ -247,7 +254,7 @@ export function usePermanentDeleteMutation() {
       refresh();
     },
     onError: (error, _paths, context) => {
-      toast.error(`Delete failed: ${error.message}`, {
+      toast.error(`Delete failed: ${getErrorMessage(error)}`, {
         id: context?.toastId,
         duration: 5000,
       });

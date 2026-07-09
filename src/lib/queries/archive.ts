@@ -34,11 +34,11 @@ export function useCompressMutation() {
   const queryClient = useQueryClient();
 
   return createMutation(() => ({
-    mutationFn: async ({ sources, format }: { sources: string[]; format: string }) => {
+    mutationFn: async ({ sources, format, archiveName }: { sources: string[]; format: string; archiveName?: string }) => {
       if (sources.length === 0) throw new Error('No files selected');
 
       const parentDir = getParentDir(sources[0]);
-      const baseName = sources.length === 1 ? getBaseName(sources[0]) : 'archive';
+      const baseName = archiveName || (sources.length === 1 ? getBaseName(sources[0]) : 'archive');
       const ext = getArchiveExt(format);
       const dest = `${parentDir}/${baseName}${ext}`;
 
@@ -74,7 +74,8 @@ export function useCompressMutation() {
       queryClient.invalidateQueries({ queryKey: ['directory'] });
     },
     onError: (error, _variables, context) => {
-      toast.error(`Compress failed: ${error.message}`, {
+      const msg = typeof error === 'string' ? error : error?.message || String(error);
+      toast.error(`Compress failed: ${msg}`, {
         id: context?.toastId,
         duration: 6000,
       });
@@ -127,7 +128,8 @@ export function useExtractMutation() {
       queryClient.invalidateQueries({ queryKey: ['directory'] });
     },
     onError: (error, _variables, context) => {
-      toast.error(`Extract failed: ${error.message}`, {
+      const msg = typeof error === 'string' ? error : error?.message || String(error);
+      toast.error(`Extract failed: ${msg}`, {
         id: context?.toastId,
         duration: 6000,
       });

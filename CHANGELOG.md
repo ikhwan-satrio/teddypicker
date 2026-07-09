@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.4.0] - 2026-07-08
+
+### Added
+- **Compress name dialog** — custom archive name input before compressing
+- **Trash toolbar** — Restore All and Empty Trash buttons with confirmation dialogs
+- **Reusable ConfirmDialog component** — custom confirmation modal for destructive actions
+- **CI/CD pipeline** — GitHub Actions workflow for automated build & release (Linux + Windows)
+- **Delete hotkey** — press `Delete` to trash selected files, with size-based permanent delete confirmation (>= 1 GB)
+
+### Fixed
+- **Compress "No such file" error** — auto-create destination directory before archiving
+- **Compress "undefined" error** — improved error message extraction across all mutations
+- **Error handling** — all mutations use `getErrorMessage()` helper for safe error display
+
+### Changed
+- **Archive operations** — compress/extract run on Tokio thread pool (`spawn_blocking`), UI stays responsive with real-time progress toasts
+- **Component split** — FileGrid refactored into FileGridToolbar, FileGridView, FileListView, TrashView
+
 ## [1.3.0] - 2026-07-08
 
 ### Fixed

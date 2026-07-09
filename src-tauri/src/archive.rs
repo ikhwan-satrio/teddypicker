@@ -87,6 +87,9 @@ fn compress_to_zip(
     dest: &Path,
     on_progress: &mut dyn FnMut(ArchiveProgress),
 ) -> Result<Vec<ArchiveProgress>, String> {
+    if let Some(parent) = dest.parent() {
+        std::fs::create_dir_all(parent).map_err(|e| format!("Failed to create directory: {}", e))?;
+    }
     let file = File::create(dest).map_err(|e| format!("Failed to create archive: {}", e))?;
     let options = SimpleFileOptions::default()
         .compression_method(zip::CompressionMethod::Deflated)
@@ -176,6 +179,9 @@ fn compress_tar_with_writer(
 
     for src in sources {
         let path = PathBuf::from(src);
+        if !path.exists() {
+            return Err(format!("Source path does not exist: {}", src));
+        }
         total += count_files(&path)?;
     }
 
@@ -214,6 +220,9 @@ fn compress_to_tar_gz(
     dest: &Path,
     on_progress: &mut dyn FnMut(ArchiveProgress),
 ) -> Result<Vec<ArchiveProgress>, String> {
+    if let Some(parent) = dest.parent() {
+        std::fs::create_dir_all(parent).map_err(|e| format!("Failed to create directory: {}", e))?;
+    }
     let file = File::create(dest).map_err(|e| format!("Failed to create archive: {}", e))?;
     let enc = GzEncoder::new(file, Compression::default());
     compress_tar_with_writer(sources, Box::new(enc), on_progress)
@@ -236,6 +245,9 @@ fn compress_to_tar_bz2(
     dest: &Path,
     on_progress: &mut dyn FnMut(ArchiveProgress),
 ) -> Result<Vec<ArchiveProgress>, String> {
+    if let Some(parent) = dest.parent() {
+        std::fs::create_dir_all(parent).map_err(|e| format!("Failed to create directory: {}", e))?;
+    }
     let file = File::create(dest).map_err(|e| format!("Failed to create archive: {}", e))?;
     let enc = BzEncoder::new(file, BzCompression::default());
     compress_tar_with_writer(sources, Box::new(enc), on_progress)
@@ -258,6 +270,9 @@ fn compress_to_tar_xz(
     dest: &Path,
     on_progress: &mut dyn FnMut(ArchiveProgress),
 ) -> Result<Vec<ArchiveProgress>, String> {
+    if let Some(parent) = dest.parent() {
+        std::fs::create_dir_all(parent).map_err(|e| format!("Failed to create directory: {}", e))?;
+    }
     let file = File::create(dest).map_err(|e| format!("Failed to create archive: {}", e))?;
     let enc = XzEncoder::new(file, 6);
     compress_tar_with_writer(sources, Box::new(enc), on_progress)
@@ -280,6 +295,9 @@ fn compress_to_tar_zst(
     dest: &Path,
     on_progress: &mut dyn FnMut(ArchiveProgress),
 ) -> Result<Vec<ArchiveProgress>, String> {
+    if let Some(parent) = dest.parent() {
+        std::fs::create_dir_all(parent).map_err(|e| format!("Failed to create directory: {}", e))?;
+    }
     let file = File::create(dest).map_err(|e| format!("Failed to create archive: {}", e))?;
     let enc = ZstdEncoder::new(file, 3).map_err(|e| e.to_string())?;
     compress_tar_with_writer(sources, Box::new(enc), on_progress)
@@ -302,6 +320,9 @@ fn compress_to_tar(
     dest: &Path,
     on_progress: &mut dyn FnMut(ArchiveProgress),
 ) -> Result<Vec<ArchiveProgress>, String> {
+    if let Some(parent) = dest.parent() {
+        std::fs::create_dir_all(parent).map_err(|e| format!("Failed to create directory: {}", e))?;
+    }
     let file = File::create(dest).map_err(|e| format!("Failed to create archive: {}", e))?;
     compress_tar_with_writer(sources, Box::new(file), on_progress)
 }
@@ -382,6 +403,14 @@ pub fn compress_files(
     format: &str,
     on_progress: &mut dyn FnMut(ArchiveProgress),
 ) -> Result<Vec<ArchiveProgress>, String> {
+    // Validate all source paths exist
+    for src in sources {
+        let path = PathBuf::from(src);
+        if !path.exists() {
+            return Err(format!("Source path does not exist: {}", src));
+        }
+    }
+
     match format {
         "zip" => compress_to_zip(sources, dest, on_progress),
         "tar" => compress_to_tar(sources, dest, on_progress),
