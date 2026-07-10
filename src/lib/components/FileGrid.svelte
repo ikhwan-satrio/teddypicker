@@ -28,6 +28,7 @@
 	import ContextMenu from './ContextMenu.svelte';
 	import OpenWithPopup from './OpenWithPopup.svelte';
 	import InputPopup from './InputPopup.svelte';
+	import ConfirmDialog from './ConfirmDialog.svelte';
 	import FileGridToolbar from './FileGridToolbar.svelte';
 	import TrashView from './TrashView.svelte';
 	import FileGridView from './FileGridView.svelte';
@@ -569,38 +570,25 @@
 
 <ContextMenu x={ctxX} y={ctxY} open={ctxOpen} items={ctxItems} onclose={closeContextMenu} />
 
-{#if confirmDeleteOpen}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-		<div class="w-full max-w-md rounded-lg border border-border bg-background p-6 shadow-lg">
-			<h2 class="text-lg font-semibold text-foreground">Permanent Delete</h2>
-			<p class="mt-2 text-sm text-muted-foreground">
-				You are about to permanently delete {confirmDeletePaths.length} item(s)
-				({formatFileSize(confirmDeleteSize)}). This action cannot be undone.
-			</p>
-			<div class="mt-4 flex justify-end gap-2">
-				<button
-					class="inline-flex h-8 items-center justify-center rounded-md border border-border bg-transparent px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent"
-					onclick={() => {
-						confirmDeleteOpen = false;
-						confirmDeletePaths = [];
-					}}
-				>
-					Cancel
-				</button>
-				<button
-					class="inline-flex h-8 items-center justify-center rounded-md bg-destructive px-3 text-xs font-medium text-destructive-foreground transition-colors hover:bg-destructive/90"
-					onclick={() => {
-						permanentDeleteMutation.mutate(confirmDeletePaths);
-						confirmDeleteOpen = false;
-						confirmDeletePaths = [];
-					}}
-				>
-					Delete Permanently
-				</button>
-			</div>
-		</div>
-	</div>
-{/if}
+<ConfirmDialog
+	open={confirmDeleteOpen}
+	title="Permanent Delete"
+	confirmLabel="Delete Permanently"
+	requireInput={true}
+	inputLabel="Type yes to permanently delete"
+	onconfirm={() => {
+		permanentDeleteMutation.mutate(confirmDeletePaths);
+		confirmDeleteOpen = false;
+		confirmDeletePaths = [];
+	}}
+	oncancel={() => {
+		confirmDeleteOpen = false;
+		confirmDeletePaths = [];
+	}}
+>
+	You are about to permanently delete {confirmDeletePaths.length} item(s)
+	({formatFileSize(confirmDeleteSize)}). This action cannot be undone.
+</ConfirmDialog>
 
 <div class="flex h-full w-full select-none flex-col">
 	<FileGridToolbar bind:viewMode />
