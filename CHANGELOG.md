@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.5.0] - 2026-07-11
+
+### Added
+- **Splash screen** — dark background loading screen with folder icon and spinner during startup
+- **Dark mode anti-FOUC** — inline script applies `.dark` class from localStorage before first paint
+- **ConfirmDialog `requireInput`** — type "yes" to confirm destructive actions (Empty Trash, Delete Permanently)
+- **Trash toolbar** — Restore All and Empty Trash buttons with confirmation dialogs in trash view
+- **RPM package build** — added RPM to CI/CD pipeline
+
+### Fixed
+- **White flash on startup** — native window `backgroundColor` set to `#0a0a0a`, `html/body` background dark
+- **Duplicate trash buttons** — removed redundant Restore All / Clear All from FileGridToolbar (TrashView handles it)
+- **Text overflow** — `original_path` in grid cards now truncates with ellipsis instead of overflowing
+
+### Changed
+- **ConfirmDialog** — added `requireInput` and `inputLabel` props, disabled confirm button until input matches
+- **TrashView** — grid cards use `overflow-hidden` for proper text clipping
+
 ## [1.4.0] - 2026-07-08
 
 ### Added
